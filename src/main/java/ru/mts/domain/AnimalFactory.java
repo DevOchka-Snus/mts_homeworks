@@ -12,7 +12,19 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * AnimalFactory class create Animal objects
+ *
+ * @version 1.0
+ * @author vladi
+ * */
 public class AnimalFactory {
+    /**
+     * Public method create Animal object
+     *
+     * @param flag s value that defines the implementation of Animal
+     * @return Animal object
+     * */
     public Animal createAnimal(int flag) {
         if (flag % 2 == 0) {
             return createPet(flag, new BigDecimal("100").setScale(2, RoundingMode.HALF_UP));
