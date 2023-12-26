@@ -1,5 +1,6 @@
-package ru.mts.domain;
+package ru.mts.factory;
 
+import ru.mts.domain.Animal;
 import ru.mts.domain.pet.Cat;
 import ru.mts.domain.pet.Dog;
 import ru.mts.domain.pet.Pet;
@@ -15,16 +16,18 @@ import java.time.format.DateTimeFormatter;
 /**
  * AnimalFactory class create Animal objects
  *
- * @version 1.0
  * @author vladi
- * */
-public class AnimalFactory {
+ * @version 1.0
+ */
+public class BaseAnimalFactory implements AnimalFactory {
+
     /**
      * Public method create Animal object
      *
      * @param flag s value that defines the implementation of Animal
      * @return Animal object
-     * */
+     */
+    @Override
     public Animal createAnimal(int flag) {
         if (flag % 2 == 0) {
             return createPet(flag, new BigDecimal("100").setScale(2, RoundingMode.HALF_UP));

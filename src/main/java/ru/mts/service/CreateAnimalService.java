@@ -1,10 +1,9 @@
 package ru.mts.service;
 
 import ru.mts.domain.Animal;
-import ru.mts.domain.AnimalFactory;
+import ru.mts.factory.AnimalFactory;
+import ru.mts.factory.BaseAnimalFactory;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +15,16 @@ import java.util.List;
  * @version 1.0
  */
 public interface CreateAnimalService {
+
     /**
      * Default method create array of Animal objects
      *
      * @return array of Animal objects
      */
     default Animal[] createAnimals() {
+        AnimalFactory animalFactory = new BaseAnimalFactory();
+
         List<Animal> animals = new ArrayList<>();
-        AnimalFactory animalFactory = new AnimalFactory();
-        var cost = new BigDecimal("100").setScale(2, RoundingMode.HALF_UP);
         for (int i = 0; i < 10; i++) {
             if (i % 2 == 0) {
                 animals.add(animalFactory.createAnimal(i));
@@ -32,6 +32,8 @@ public interface CreateAnimalService {
                 animals.add(animalFactory.createAnimal(i));
             }
         }
+
         return animals.toArray(Animal[]::new);
     }
+
 }

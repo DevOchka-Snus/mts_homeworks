@@ -1,10 +1,12 @@
 package ru.mts.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public abstract class AbstractAnimal implements Animal {
+
     protected String breed;
     protected String name;
     protected BigDecimal cost;
@@ -14,41 +16,45 @@ public abstract class AbstractAnimal implements Animal {
     public AbstractAnimal(String breed, String name, BigDecimal cost, String character, LocalDate birthDate) {
         this.breed = breed;
         this.name = name;
-        this.cost = cost;
+        this.cost = (Objects.isNull(cost) ? null : cost.setScale(2, RoundingMode.HALF_UP));
         this.character = character;
         this.birthDate = birthDate;
     }
 
     @Override
     public String toString() {
-        return  "breed='" + getBreed() + '\'' +
+        return getClass().getSimpleName() +
+                "{ breed='" + getBreed() + '\'' +
                 ", name='" + getName() + '\'' +
-                ", cost=" + getCost().toString() +
+                ", cost=" + (Objects.isNull(getCost()) ? "null" : getCost().toPlainString()) +
                 ", character='" + getCharacter() + '\'' +
-                ", birthDate= " + getBirthDate().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                ", birthDate= " + (Objects.isNull(getBirthDate()) ? "null" : String.format("%1$td-%1$tm-%1$tY", getBirthDate()) + " }");
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-        AbstractAnimal animal = (AbstractAnimal) o;
+        AbstractAnimal that = (AbstractAnimal) o;
 
-        if (!breed.equals(animal.breed)) return false;
-        if (!name.equals(animal.name)) return false;
-        if (!cost.equals(animal.cost)) return false;
-        if (!character.equals(animal.character)) return false;
-        return birthDate.equals(animal.birthDate);
+        return Objects.equals(breed, that.breed)
+                && Objects.equals(name, that.name)
+                && Objects.equals(character, that.character)
+                && Objects.equals(birthDate, that.birthDate);
     }
 
     @Override
     public int hashCode() {
-        int result = breed != null ? breed.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (cost != null ? cost.hashCode() : 0);
-        result = 31 * result + (character != null ? character.hashCode() : 0);
-        result = 31 * result + (birthDate != null ? birthDate.hashCode() : 0);
+        int result = breed == null ? 0 : breed.hashCode();
+        result = 31 * result + (name == null ? 0 : name.hashCode());
+        result = 31 * result + (character == null ? 0 : character.hashCode());
+        result = 31 * result + (birthDate == null ? 0 : birthDate.hashCode());
+
         return result;
     }
 
@@ -76,4 +82,5 @@ public abstract class AbstractAnimal implements Animal {
     public LocalDate getBirthDate() {
         return birthDate;
     }
+
 }

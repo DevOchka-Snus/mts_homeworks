@@ -7,6 +7,7 @@ import ru.mts.service.impl.CreateAnimalServiceImpl;
 import ru.mts.service.impl.SearchServiceImpl;
 
 public class Main {
+
     public static void main(String[] args) {
         CreateAnimalService createAnimalService = new CreateAnimalServiceImpl();
         SearchService searchService = new SearchServiceImpl();
