@@ -1,29 +1,10 @@
 package ru.mts.domain.pet;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class Dog extends Pet {
-    public Dog(String breed, String name, BigDecimal cost, String character) {
-        super(breed, name, cost, character);
-    }
-
-    @Override
-    public String getBreed() {
-        return breed;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    @Override
-    public String getCharacter() {
-        return character;
+    public Dog(String breed, String name, BigDecimal cost, String character, LocalDate birthDate) {
+        super(breed, name, cost, character, birthDate);
     }
 }
