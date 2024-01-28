@@ -15,7 +15,7 @@ public class Main {
         for (Animal animal : one) {
             System.out.println(animal);
         }
-        var two = searchService.findOlderAnimal(createAnimalService.createAnimals(), 100);
+        var two = searchService.findOlderAnimal(createAnimalService.createAnimals(), 10000000);
         System.out.println("findOlderAnimal");
         for (Animal animal : two) {
             System.out.println(animal);

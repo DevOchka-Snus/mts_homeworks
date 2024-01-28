@@ -13,6 +13,9 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public Animal[] findOlderAnimal(Animal[] animals, int n) {
+        if (n <= 0) {
+            throw new IllegalStateException("number must be more than 0");
+        }
         return Arrays.stream(animals).filter((it) -> it.getBirthDate().plusYears(n).isBefore(LocalDate.now())).toArray(Animal[]::new);
     }
 
