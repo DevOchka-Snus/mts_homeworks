@@ -8,27 +8,24 @@ import ru.mts.domain.Animal;
  * @version 1.0
  * @author vladi
  * */
-public interface SearchService {
+public interface AnimalRepository {
     /**
      * Method filters array of Animal objects based on
      * whether the year of birth of the Animal object is a leap year
-     * @param animals is array of Animal objects
      * @return filtered array of Animal objects
      * */
-    Animal[] findLeapYearNames(Animal[] animals);
+    Animal[] findLeapYearNames();
     /**
      * Method filters array of Animal objects based on
      * whether Animal object is older than n years
-     * @param animals is array of Animal objects
      * @param n is age for filter
      * @return filtered array of Animal objects
      * */
-    Animal[] findOlderAnimal(Animal[] animals, int n);
+    Animal[] findOlderAnimal(int n);
     /**
      * Method filters array of Animal objects based on
      * whether Animal object is duplicate
-     * @param animals is array of Animal objects
      * @return array of Animal duplicates
      * */
-    Animal[] findDuplicate(Animal[] animals);
+    Animal[] findDuplicate();
 }

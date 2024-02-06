@@ -5,6 +5,6 @@ import java.time.LocalDate;
 
 public class Lion extends Predator {
     public Lion(String breed, String name, BigDecimal cost, String character, LocalDate birthDate) {
-        super(breed, name, cost, character, birthDate);
+        super("Lion", breed, name, cost, character, birthDate);
     }
 }
