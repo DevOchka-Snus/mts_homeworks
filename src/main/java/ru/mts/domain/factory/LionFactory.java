@@ -8,7 +8,8 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class LionFactory extends AnimalFactory{
+public class LionFactory extends AnimalFactory {
+
     @Override
     public Animal createAnimal() {
         return new Lion("lion " + System.currentTimeMillis(),
@@ -17,4 +18,5 @@ public class LionFactory extends AnimalFactory{
                 "character " + System.currentTimeMillis(),
                 LocalDate.parse("26-12-2023", DateTimeFormatter.ofPattern("dd-MM-yyyy")));
     }
+
 }

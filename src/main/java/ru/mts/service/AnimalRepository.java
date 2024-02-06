@@ -9,6 +9,9 @@ import ru.mts.domain.Animal;
  * @author vladi
  * */
 public interface AnimalRepository {
+
+    String NAME = "mts_AnimalRepository";
+
     /**
      * Method filters array of Animal objects based on
      * whether the year of birth of the Animal object is a leap year

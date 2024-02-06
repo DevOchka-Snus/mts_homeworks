@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public abstract class AbstractAnimal implements Animal {
+
     protected String animalType;
     protected String breed;
     protected String name;
@@ -23,7 +24,7 @@ public abstract class AbstractAnimal implements Animal {
 
     @Override
     public String toString() {
-        return  "breed='" + getBreed() + '\'' +
+        return "breed='" + getBreed() + '\'' +
                 ", name='" + getName() + '\'' +
                 ", cost=" + getCost().toString() +
                 ", character='" + getCharacter() + '\'' +
@@ -32,15 +33,21 @@ public abstract class AbstractAnimal implements Animal {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         AbstractAnimal animal = (AbstractAnimal) o;
 
+        // а если this.breed == null ?
         if (!breed.equals(animal.breed)) return false;
         if (!name.equals(animal.name)) return false;
         if (!cost.equals(animal.cost)) return false;
         if (!character.equals(animal.character)) return false;
+
         return birthDate.equals(animal.birthDate);
     }
 
@@ -51,6 +58,7 @@ public abstract class AbstractAnimal implements Animal {
         result = 31 * result + (cost != null ? cost.hashCode() : 0);
         result = 31 * result + (character != null ? character.hashCode() : 0);
         result = 31 * result + (birthDate != null ? birthDate.hashCode() : 0);
+
         return result;
     }
 
@@ -78,4 +86,5 @@ public abstract class AbstractAnimal implements Animal {
     public LocalDate getBirthDate() {
         return birthDate;
     }
+
 }

@@ -1,7 +1,6 @@
 package ru.mts.service.impl;
 
-import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.ObjectProvider;
 import ru.mts.domain.Animal;
 import ru.mts.service.AnimalRepository;
 import ru.mts.service.CreateAnimalService;
@@ -9,20 +8,45 @@ import ru.mts.service.CreateAnimalService;
 import java.time.LocalDate;
 import java.util.*;
 
-@Repository
 public class AnimalRepositoryImpl implements AnimalRepository {
-    private final CreateAnimalService createAnimalService;
 
-    private Animal[] animals;
+    private final ObjectProvider<CreateAnimalService> createAnimalServicesBeanProvider;
 
-    public AnimalRepositoryImpl(CreateAnimalService createAnimalService) {
-        this.createAnimalService = createAnimalService;
+    private final Animal[] animals;
+
+    private boolean initialized;
+
+    {
+        animals = new Animal[(Integer.MAX_VALUE / 100_000)];
     }
 
-    @PostConstruct
-    private void fillAnimals() {
-        animals = createAnimalService.createAnimals();
+    public AnimalRepositoryImpl(ObjectProvider<CreateAnimalService> createAnimalServicesBeanProvider) {
+        this.createAnimalServicesBeanProvider = createAnimalServicesBeanProvider;
     }
+
+    public void postConstruct() {
+        if (!initialized) {
+
+            Animal[] temp;
+            CreateAnimalService prototype;
+            for (int i = 0; i < animals.length; i++) {
+                prototype = createAnimalServicesBeanProvider.getIfAvailable();
+                if (Objects.isNull(prototype)) {
+                    throw new RuntimeException("Caramba! 'prototype' is null");
+                }
+
+                temp = prototype.createAnimals();
+                if (Objects.nonNull(temp)) {
+                    animals[i] = temp[temp.length / 2];
+                }
+
+            }
+
+            initialized = true;
+        }
+
+    }
+
     @Override
     public Animal[] findLeapYearNames() {
         return Arrays.stream(animals).filter((it) -> it.getBirthDate().isLeapYear()).toArray(Animal[]::new);
@@ -33,6 +57,7 @@ public class AnimalRepositoryImpl implements AnimalRepository {
         if (n <= 0) {
             throw new IllegalStateException("number must be more than 0");
         }
+
         return Arrays.stream(animals).filter((it) -> it.getBirthDate().plusYears(n).isBefore(LocalDate.now())).toArray(Animal[]::new);
     }
 
@@ -47,6 +72,8 @@ public class AnimalRepositoryImpl implements AnimalRepository {
                 set.add(animal);
             }
         }
+
         return result.toArray(Animal[]::new);
     }
+
 }

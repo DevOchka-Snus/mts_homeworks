@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class CatFactory extends AnimalFactory{
+
     @Override
     public Animal createAnimal() {
         return new Cat("cat ",
@@ -17,4 +18,5 @@ public class CatFactory extends AnimalFactory{
                 "character ",
                 LocalDate.parse("20-02-1488", DateTimeFormatter.ofPattern("dd-MM-yyyy")));
     }
+
 }

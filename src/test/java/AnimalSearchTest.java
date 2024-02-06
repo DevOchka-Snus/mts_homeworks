@@ -1,19 +1,11 @@
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import ru.mts.domain.Animal;
 import ru.mts.domain.pet.Cat;
 import ru.mts.domain.pet.Dog;
-import ru.mts.service.CreateAnimalService;
-import ru.mts.service.AnimalRepository;
-import ru.mts.service.impl.CreateAnimalServiceImpl;
-import ru.mts.service.impl.AnimalRepositoryImpl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

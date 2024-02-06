@@ -10,10 +10,14 @@ import ru.mts.domain.Animal;
  * @version 1.0
  */
 public interface CreateAnimalService {
+
+    String NAME = "mts_CreateAnimalService";
+
     /**
      * Method create array of Animal objects
      *
      * @return array of Animal objects
      */
     Animal[] createAnimals();
+
 }

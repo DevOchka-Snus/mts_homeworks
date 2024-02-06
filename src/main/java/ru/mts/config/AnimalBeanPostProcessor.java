@@ -7,6 +7,7 @@ import ru.mts.service.impl.CreateAnimalServiceImpl;
 
 
 public class AnimalBeanPostProcessor implements BeanPostProcessor {
+
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof CreateAnimalServiceImpl) {
@@ -19,6 +20,8 @@ public class AnimalBeanPostProcessor implements BeanPostProcessor {
                 animalService.setAnimalType(x > b ? AnimalType.LION : AnimalType.WOLF);
             }
         }
+
         return bean;
     }
+
 }
