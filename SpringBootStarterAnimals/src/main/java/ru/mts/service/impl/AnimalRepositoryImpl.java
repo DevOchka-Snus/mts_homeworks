@@ -5,6 +5,7 @@ import ru.mts.domain.Animal;
 import ru.mts.service.AnimalRepository;
 import ru.mts.service.CreateAnimalService;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -24,6 +25,7 @@ public class AnimalRepositoryImpl implements AnimalRepository {
         this.createAnimalServicesBeanProvider = createAnimalServicesBeanProvider;
     }
 
+    @PostConstruct
     public void postConstruct() {
         if (!initialized) {
 

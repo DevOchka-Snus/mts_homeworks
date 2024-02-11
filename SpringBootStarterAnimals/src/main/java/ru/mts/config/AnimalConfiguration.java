@@ -12,7 +12,7 @@ import ru.mts.service.impl.AnimalRepositoryImpl;
 import ru.mts.service.impl.CreateAnimalServiceImpl;
 
 @Configuration
-public class AppConfiguration {
+public class AnimalConfiguration {
 
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     @Bean(name = CreateAnimalService.NAME)
@@ -25,7 +25,7 @@ public class AppConfiguration {
         return new AnimalBeanPostProcessor();
     }
 
-    @Bean(name = AnimalRepository.NAME, initMethod = "postConstruct")
+    @Bean(name = AnimalRepository.NAME)
     public AnimalRepository animalRepository(@Autowired ObjectProvider<CreateAnimalService> createAnimalServicesBeanProvider) {
         return new AnimalRepositoryImpl(createAnimalServicesBeanProvider);
     }
