@@ -2,15 +2,23 @@ package ru.mts.service.impl;
 
 import ru.mts.domain.Animal;
 import ru.mts.domain.AnimalType;
-import ru.mts.domain.factory.*;
+import ru.mts.factory.AnimalFactory;
 import ru.mts.service.CreateAnimalService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class CreateAnimalServiceImpl implements CreateAnimalService {
 
+    private final Map<String, AnimalFactory> animalFactorys;
+
     private AnimalType animalType;
+
+    public CreateAnimalServiceImpl(Map<String, AnimalFactory> animalFactorys) {
+        this.animalFactorys = Collections.unmodifiableMap(animalFactorys);
+    }
 
     public void setAnimalType(AnimalType animalType) {
         this.animalType = animalType;
@@ -18,16 +26,17 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
 
     @Override
     public Animal[] createAnimals() {
-        List<Animal> animals = new ArrayList<>();
-        AnimalFactory animalFactory = switch (animalType) {
-            case CAT -> new CatFactory();
-            case DOG -> new DogFactory();
-            case WOLF -> new WolfFactory();
-            default -> new LionFactory();
-        };
+        int count = 10;
+        List<Animal> animals = new ArrayList<>(count);
 
-        for (int i = 0; i < 10; i++) {
-            animals.add(animalFactory.createAnimal());
+        AnimalFactory factory = animalFactorys.values()
+                .stream()
+                .filter(f -> f.isApplicable(animalType))
+                .findFirst()
+                .orElseThrow();
+
+        for (int i = 0; i < count; i++) {
+            animals.add(factory.createAnimal());
         }
 
         return animals.toArray(Animal[]::new);

@@ -1,6 +1,7 @@
-package ru.mts.domain.factory;
+package ru.mts.factory;
 
 import ru.mts.domain.Animal;
+import ru.mts.domain.AnimalType;
 
 /**
  * AnimalFactory class create Animal objects
@@ -8,13 +9,15 @@ import ru.mts.domain.Animal;
  * @version 1.0
  * @author vladi
  * */
-public abstract class AnimalFactory {
+public interface AnimalFactory {
 
     /**
      * Public abstract method create Animal object
      *
      * @return Animal object
      * */
-    public abstract Animal createAnimal();
+    Animal createAnimal();
+
+    boolean isApplicable(AnimalType animalType);
 
 }

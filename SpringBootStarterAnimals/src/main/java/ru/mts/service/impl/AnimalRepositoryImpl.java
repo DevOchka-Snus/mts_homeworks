@@ -51,7 +51,11 @@ public class AnimalRepositoryImpl implements AnimalRepository {
 
     @Override
     public Animal[] findLeapYearNames() {
-        return Arrays.stream(animals).filter((it) -> it.getBirthDate().isLeapYear()).toArray(Animal[]::new);
+        return Arrays.stream(animals)
+                .filter(Objects::nonNull)
+                .filter(it -> Objects.nonNull(it.getBirthDate())
+                        && it.getBirthDate().isLeapYear())
+                .toArray(Animal[]::new);
     }
 
     @Override
@@ -60,19 +64,28 @@ public class AnimalRepositoryImpl implements AnimalRepository {
             throw new IllegalStateException("number must be more than 0");
         }
 
-        return Arrays.stream(animals).filter((it) -> it.getBirthDate().plusYears(n).isBefore(LocalDate.now())).toArray(Animal[]::new);
+        final var now = LocalDate.now();
+
+        return Arrays.stream(animals)
+                .filter(Objects::nonNull)
+                .filter(it -> Objects.nonNull(it.getBirthDate())
+                        && it.getBirthDate().plusYears(n).isBefore(now))
+                .toArray(Animal[]::new);
     }
 
     @Override
     public Animal[] findDuplicate() {
         Set<Animal> set = new HashSet<>();
         List<Animal> result = new ArrayList<>();
-        for (Animal animal : animals) {
-            if (set.contains(animal)) {
-                result.add(animal);
-            } else {
-                set.add(animal);
+        for (Animal a : animals) {
+            if (Objects.nonNull(a)) {
+                if (set.contains(a)) {
+                    result.add(a);
+                } else {
+                    set.add(a);
+                }
             }
+
         }
 
         return result.toArray(Animal[]::new);
