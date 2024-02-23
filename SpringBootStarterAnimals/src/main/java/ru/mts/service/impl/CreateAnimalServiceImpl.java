@@ -12,12 +12,12 @@ import java.util.Map;
 
 public class CreateAnimalServiceImpl implements CreateAnimalService {
 
-    private final Map<String, AnimalFactory> animalFactorys;
+    private final Map<String, AnimalFactory> animalFactories;
 
     private AnimalType animalType;
 
-    public CreateAnimalServiceImpl(Map<String, AnimalFactory> animalFactorys) {
-        this.animalFactorys = Collections.unmodifiableMap(animalFactorys);
+    public CreateAnimalServiceImpl(Map<String, AnimalFactory> animalFactories) {
+        this.animalFactories = Collections.unmodifiableMap(animalFactories);
     }
 
     public void setAnimalType(AnimalType animalType) {
@@ -29,7 +29,7 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
         int count = 10;
         List<Animal> animals = new ArrayList<>(count);
 
-        AnimalFactory factory = animalFactorys.values()
+        AnimalFactory factory = animalFactories.values()
                 .stream()
                 .filter(f -> f.isApplicable(animalType))
                 .findFirst()
