@@ -6,7 +6,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.test.context.TestPropertySource;
@@ -66,6 +65,7 @@ public class SpringBootStarterAnimalsTest {
         private List<String> lionNames;
         @Value("#{'${animal.wolf.names}'.split(',')}")
         private List<String> wolfNames;
+
         @Bean(name = CatFactory.NAME)
         public CatFactory catFactory(@Autowired AnimalNameProvider animalNameProvider) {
             return new CatFactory(animalNameProvider);
