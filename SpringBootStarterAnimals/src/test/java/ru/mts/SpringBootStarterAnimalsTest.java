@@ -2,6 +2,7 @@ package ru.mts;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -15,6 +16,7 @@ import ru.mts.domain.AnimalType;
 import ru.mts.domain.pet.Cat;
 import ru.mts.domain.pet.Dog;
 import ru.mts.factory.AnimalNameProvider;
+import ru.mts.factory.AnimalRandomNameProvider;
 import ru.mts.factory.CatFactory;
 import ru.mts.service.CreateAnimalService;
 
@@ -22,11 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-@TestPropertySource(locations = "classpath:application-test.yml")
 @SpringBootTest(classes = AnimalTestConfiguration.class)
 public class SpringBootStarterAnimalsTest {
 
-    @Autowired
+    @Spy
     private CreateAnimalService createAnimalService;
 
     @Autowired
@@ -37,6 +38,7 @@ public class SpringBootStarterAnimalsTest {
 
     @Autowired
     private CatFactory catFactory;
+
 
     @Test
     public void createNotNullName() {
