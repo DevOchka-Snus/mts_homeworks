@@ -7,6 +7,8 @@ import ru.mts.service.impl.CreateAnimalServiceImpl;
 
 public class AnimalBeanPostProcessor implements BeanPostProcessor {
 
+    public static final String NAME = "mts_AnimalBeanPostProcessor";
+
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof CreateAnimalServiceImpl) {

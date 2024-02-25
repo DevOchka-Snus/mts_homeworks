@@ -1,3 +1,5 @@
+package ru.mts;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import ru.mts.domain.Animal;

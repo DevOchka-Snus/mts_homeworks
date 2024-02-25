@@ -1,8 +1,15 @@
+package ru.mts;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.mts.config.AnimalTestConfiguration;
 import ru.mts.domain.Animal;
 import ru.mts.service.AnimalRepository;
 import ru.mts.service.CreateAnimalService;
@@ -13,14 +20,16 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @SpringBootTest(classes = AnimalTestConfiguration.class)
 public class SpringBootAnimalTest {
-    @Autowired
+
+    @Spy
     private CreateAnimalService createAnimalService;
 
-    @Autowired
+    @Spy
     private AnimalRepository animalRepository;
-
 
     @Test
     public void checkOnlyLeapYearInArray() {
@@ -71,7 +80,9 @@ public class SpringBootAnimalTest {
                 set.add(animal);
             }
         }
+
         var target = result.toArray(Animal[]::new);
         assertArrayEquals(target, animalRepository.findDuplicate());
     }
+
 }
