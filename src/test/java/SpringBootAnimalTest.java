@@ -1,10 +1,8 @@
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.mts.config.AnimalConfiguration;
 import ru.mts.domain.Animal;
 import ru.mts.service.AnimalRepository;
 import ru.mts.service.CreateAnimalService;
@@ -12,9 +10,10 @@ import ru.mts.service.CreateAnimalService;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = AnimalConfiguration.class)
+@SpringBootTest(classes = AnimalTestConfiguration.class)
 public class SpringBootAnimalTest {
     @Autowired
     private CreateAnimalService createAnimalService;

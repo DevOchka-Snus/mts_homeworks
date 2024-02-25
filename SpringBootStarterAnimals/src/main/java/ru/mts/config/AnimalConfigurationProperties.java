@@ -22,6 +22,22 @@ public class AnimalConfigurationProperties {
     @Value("#{'${animal.wolf.names}'.split(',')}")
     private List<String> wolfNames;
 
+    public void setDogNames(List<String> dogNames) {
+        this.dogNames = dogNames;
+    }
+
+    public void setCatNames(List<String> catNames) {
+        this.catNames = catNames;
+    }
+
+    public void setLionNames(List<String> lionNames) {
+        this.lionNames = lionNames;
+    }
+
+    public void setWolfNames(List<String> wolfNames) {
+        this.wolfNames = wolfNames;
+    }
+
     public List<String> getDogNames() {
         return Collections.unmodifiableList(dogNames);
     }
