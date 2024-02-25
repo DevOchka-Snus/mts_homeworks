@@ -51,9 +51,5 @@ public class AnimalTestConfiguration {
         return new AnimalBeanPostProcessor();
     }
 
-    @Bean(name = AnimalNameProvider.NAME + TEST_BEAN_NAME_SUFFIX)
-    public AnimalNameProvider animalNameProvider(@Autowired AnimalConfigurationProperties animalConfigurationProperties) {
-        return new AnimalRandomNameProvider(animalConfigurationProperties);
-    }
 
 }

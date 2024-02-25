@@ -8,11 +8,16 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.mts.config.AnimalTestConfiguration;
 import ru.mts.domain.Animal;
+import ru.mts.factory.AnimalFactory;
 import ru.mts.service.AnimalRepository;
 import ru.mts.service.CreateAnimalService;
+import ru.mts.service.impl.AnimalRepositoryImpl;
+import ru.mts.service.impl.CreateAnimalServiceImpl;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -24,12 +29,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @MockitoSettings(strictness = Strictness.LENIENT)
 @SpringBootTest(classes = AnimalTestConfiguration.class)
 public class SpringBootAnimalTest {
+    @Autowired
+    Map<String, AnimalFactory> animalFactories;
+
+    @Autowired
+    ObjectProvider<CreateAnimalService> createAnimalServicesBeanProvider;
 
     @Spy
     private CreateAnimalService createAnimalService;
 
     @Spy
     private AnimalRepository animalRepository;
+
+    {
+        createAnimalService = new CreateAnimalServiceImpl(animalFactories);
+        animalRepository = new AnimalRepositoryImpl(createAnimalServicesBeanProvider);
+    }
 
     @Test
     public void checkOnlyLeapYearInArray() {

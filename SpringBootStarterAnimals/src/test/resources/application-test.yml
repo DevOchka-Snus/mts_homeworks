@@ -1,0 +1,9 @@
+animal:
+  lion:
+    names: Lev, Simba, Mufasa, Artur, Vladimir
+  dog:
+    names: Vasya, Daniil, Vlad, Max, Rob
+  cat:
+    names: Jack, Roma, Kolya, Jesus, John
+  wolf:
+    names: Tesak, Taker, Carlson, Qwerty, Lox
