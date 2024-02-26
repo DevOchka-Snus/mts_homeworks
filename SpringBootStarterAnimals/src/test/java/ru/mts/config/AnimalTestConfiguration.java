@@ -2,12 +2,10 @@ package ru.mts.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
-import org.springframework.test.context.TestPropertySource;
 import ru.mts.factory.*;
 import ru.mts.service.CreateAnimalService;
 import ru.mts.service.impl.CreateAnimalServiceImpl;
@@ -15,8 +13,6 @@ import ru.mts.service.impl.CreateAnimalServiceImpl;
 import java.util.Map;
 
 @TestConfiguration
-@SpringBootConfiguration
-@TestPropertySource(locations = "classpath:application-test.yml")
 @EnableConfigurationProperties(AnimalConfigurationProperties.class)
 public class AnimalTestConfiguration {
 

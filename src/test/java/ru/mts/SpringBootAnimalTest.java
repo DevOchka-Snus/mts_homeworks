@@ -11,6 +11,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import ru.mts.config.AnimalTestConfiguration;
 import ru.mts.domain.Animal;
 import ru.mts.factory.AnimalFactory;
@@ -27,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-@SpringBootTest(classes = AnimalTestConfiguration.class)
+@TestPropertySource(locations = {"classpath:application-test.yml"})
+@SpringBootTest(classes = {App.class, AnimalTestConfiguration.class})
 public class SpringBootAnimalTest {
     @Autowired
     Map<String, AnimalFactory> animalFactories;

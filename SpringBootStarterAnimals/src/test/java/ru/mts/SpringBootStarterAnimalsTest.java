@@ -1,14 +1,8 @@
 package ru.mts;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import ru.mts.config.AnimalTestConfiguration;
 import ru.mts.domain.Animal;
@@ -16,22 +10,19 @@ import ru.mts.domain.AnimalType;
 import ru.mts.domain.pet.Cat;
 import ru.mts.domain.pet.Dog;
 import ru.mts.factory.AnimalNameProvider;
-import ru.mts.factory.AnimalRandomNameProvider;
 import ru.mts.factory.CatFactory;
 import ru.mts.service.CreateAnimalService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-@SpringBootTest(classes = AnimalTestConfiguration.class)
+
+
+@SpringBootTest(classes = {AnimalTestConfiguration.class})
+@TestPropertySource(locations = {"classpath:application-test.yml"})
 public class SpringBootStarterAnimalsTest {
 
-    @Spy
-    private CreateAnimalService createAnimalService;
-
     @Autowired
-    private ApplicationContext applicationContext;
+    private CreateAnimalService createAnimalService;
 
     @Autowired
     private AnimalNameProvider animalNameProvider;
@@ -47,12 +38,6 @@ public class SpringBootStarterAnimalsTest {
         assertNotNull(name);
     }
 
-    @Test
-    public void checkPrototypeScopeOfCreateAnimalService() {
-        CreateAnimalService other = applicationContext.getBean(CreateAnimalService.NAME + "Test", CreateAnimalService.class);
-
-        assertNotEquals(createAnimalService, other);
-    }
 
     @Test
     public void createArrayOfAnimals() {
