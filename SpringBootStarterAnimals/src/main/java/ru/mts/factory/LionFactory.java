@@ -1,7 +1,5 @@
 package ru.mts.factory;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import ru.mts.domain.Animal;
 import ru.mts.domain.AnimalType;
 import ru.mts.domain.predator.Lion;
@@ -13,14 +11,12 @@ import java.time.format.DateTimeFormatter;
 
 import static ru.mts.domain.AnimalType.LION;
 
-@Component(LionFactory.NAME)
 public class LionFactory implements AnimalFactory {
 
     public static final String NAME = "springBootStarterAnimals_LionFactory";
 
     private final AnimalNameProvider animalNameProvider;
 
-    @Autowired
     public LionFactory(AnimalNameProvider animalNameProvider) {
         this.animalNameProvider = animalNameProvider;
     }

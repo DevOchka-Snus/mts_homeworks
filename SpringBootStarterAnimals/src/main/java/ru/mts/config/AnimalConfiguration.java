@@ -8,9 +8,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import ru.mts.factory.AnimalFactory;
-import ru.mts.factory.AnimalNameProvider;
-import ru.mts.factory.AnimalRandomNameProvider;
+import ru.mts.factory.*;
 import ru.mts.service.AnimalRepository;
 import ru.mts.service.CreateAnimalService;
 import ru.mts.service.impl.AnimalRepositoryImpl;
@@ -45,6 +43,30 @@ public class AnimalConfiguration {
     @Bean(name = AnimalNameProvider.NAME)
     public AnimalNameProvider animalNameProvider(@Autowired AnimalConfigurationProperties animalConfigurationProperties) {
         return new AnimalRandomNameProvider(animalConfigurationProperties);
+    }
+
+    @ConditionalOnMissingBean
+    @Bean(name = CatFactory.NAME)
+    public CatFactory catFactory(@Autowired AnimalNameProvider animalNameProvider) {
+        return new CatFactory(animalNameProvider);
+    }
+
+    @ConditionalOnMissingBean
+    @Bean(name = DogFactory.NAME)
+    public DogFactory dogFactory(@Autowired AnimalNameProvider animalNameProvider) {
+        return new DogFactory(animalNameProvider);
+    }
+
+    @ConditionalOnMissingBean
+    @Bean(name = LionFactory.NAME)
+    public LionFactory lionFactory(@Autowired AnimalNameProvider animalNameProvider) {
+        return new LionFactory(animalNameProvider);
+    }
+
+    @ConditionalOnMissingBean
+    @Bean(name = WolfFactory.NAME)
+    public WolfFactory wolfFactory(@Autowired AnimalNameProvider animalNameProvider) {
+        return new WolfFactory(animalNameProvider);
     }
 
 }

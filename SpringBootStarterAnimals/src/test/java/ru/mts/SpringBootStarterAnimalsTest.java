@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+import ru.mts.config.AnimalConfiguration;
 import ru.mts.config.AnimalTestConfiguration;
 import ru.mts.domain.Animal;
 import ru.mts.domain.AnimalType;
@@ -15,9 +16,7 @@ import ru.mts.service.CreateAnimalService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
-
-@SpringBootTest(classes = {AnimalTestConfiguration.class})
+@SpringBootTest(classes = {AnimalConfiguration.class, AnimalTestConfiguration.class})
 @TestPropertySource(locations = {"classpath:application-test.yml"})
 public class SpringBootStarterAnimalsTest {
 
@@ -30,7 +29,6 @@ public class SpringBootStarterAnimalsTest {
     @Autowired
     private CatFactory catFactory;
 
-
     @Test
     public void createNotNullName() {
         var name = animalNameProvider.generateName(AnimalType.WOLF);
@@ -38,27 +36,29 @@ public class SpringBootStarterAnimalsTest {
         assertNotNull(name);
     }
 
-
     @Test
     public void createArrayOfAnimals() {
         Animal[] animals = createAnimalService.createAnimals();
 
         assertNotNull(animals);
-
         assertEquals(animals.length, 10);
     }
 
     @Test
     public void checkCatFactory() {
         var animal = catFactory.createAnimal();
-        assertTrue(animal instanceof Cat);
+
+        // (animal instanceof Cat) - пройдет проверку в случае если там будет класс расширяющий его (TomCat extends Cat)
+        assertEquals(Cat.class, animal.getClass());
     }
 
     @Test
     public void checkErrorCast() {
         var animal = catFactory.createAnimal();
+
         assertThrows(ClassCastException.class, () -> {
             Dog dog = (Dog) animal;
         });
     }
+
 }
