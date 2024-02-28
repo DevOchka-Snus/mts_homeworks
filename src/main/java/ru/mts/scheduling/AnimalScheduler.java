@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.mts.config.AppConfigProperties;
-import ru.mts.domain.Animal;
 import ru.mts.service.AnimalRepository;
 
 import java.util.Objects;
@@ -37,20 +36,20 @@ public class AnimalScheduler implements AnimalSchedulerMBean {
     public void printAnimals() {
         printInfo("findLeapYearNames");
         var one = animalRepository.findLeapYearNames();
-        for (Animal animal : one) {
-            printInfo(String.valueOf(animal));
+        for (var animal : one.entrySet()) {
+            printInfo(animal.getKey() + ": " + animal.getValue().toString());
         }
 
         var two = animalRepository.findOlderAnimal(animalCount);
         printInfo("findOlderAnimal");
-        for (Animal animal : two) {
-            printInfo(String.valueOf(animal));
+        for (var animal : two.entrySet()) {
+            printInfo(animal.getKey().toString() + ": " + animal.getValue());
         }
 
         printInfo("findDuplicate");
         var three = animalRepository.findDuplicate();
-        for (Animal animal : three) {
-            printInfo(String.valueOf(animal));
+        for (var animal : three.entrySet()) {
+            printInfo(animal.getKey() + ": " + animal.getValue());
         }
 
     }

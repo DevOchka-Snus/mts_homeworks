@@ -6,7 +6,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import ru.mts.config.AnimalConfiguration;
 import ru.mts.config.AnimalTestConfiguration;
-import ru.mts.domain.Animal;
 import ru.mts.domain.AnimalType;
 import ru.mts.domain.pet.Cat;
 import ru.mts.domain.pet.Dog;
@@ -38,10 +37,10 @@ public class SpringBootStarterAnimalsTest {
 
     @Test
     public void createArrayOfAnimals() {
-        Animal[] animals = createAnimalService.createAnimals();
+        var animals = createAnimalService.createAnimals();
 
         assertNotNull(animals);
-        assertEquals(animals.length, 10);
+        assertEquals(animals.size(), 10);
     }
 
     @Test

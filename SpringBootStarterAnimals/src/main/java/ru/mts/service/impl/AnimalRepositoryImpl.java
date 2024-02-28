@@ -7,41 +7,37 @@ import ru.mts.service.AnimalRepository;
 import ru.mts.service.CreateAnimalService;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
+
 
 public class AnimalRepositoryImpl implements AnimalRepository {
 
-    private final ObjectProvider<CreateAnimalService> createAnimalServicesBeanProvider;
+    private final ObjectProvider<CreateAnimalService> createAnimalService;
 
-    private final Animal[] animals;
+    private final Map<String, List<Animal>> animals = new HashMap<>();
 
     private boolean initialized;
 
-    {
-        animals = new Animal[(Integer.MAX_VALUE / 100_000)];
-    }
-
-    public AnimalRepositoryImpl(ObjectProvider<CreateAnimalService> createAnimalServicesBeanProvider) {
-        this.createAnimalServicesBeanProvider = createAnimalServicesBeanProvider;
+    public AnimalRepositoryImpl(ObjectProvider<CreateAnimalService> createAnimalService) {
+        this.createAnimalService = createAnimalService;
     }
 
     @PostConstruct
     public void postConstruct() {
         if (!initialized) {
 
-            Animal[] temp;
-            CreateAnimalService prototype;
-            for (int i = 0; i < animals.length; i++) {
-                prototype = createAnimalServicesBeanProvider.getIfAvailable();
-                if (Objects.isNull(prototype)) {
-                    throw new RuntimeException("Caramba! 'prototype' is null");
-                }
+            var prototype = createAnimalService.getIfAvailable();
 
-                temp = prototype.createAnimals();
-                if (Objects.nonNull(temp)) {
-                    animals[i] = temp[temp.length / 2];
-                }
+            if (!Objects.nonNull(prototype)) {
+                throw new RuntimeException("huyna kakaya-to");
+            }
 
+            var animalMap = prototype.createAnimals();
+            if (Objects.nonNull(animalMap)) {
+                for (var pair : animalMap.entrySet()) {
+                    animals.computeIfAbsent(pair.getKey(), it -> new ArrayList<>()).addAll(pair.getValue());
+                }
             }
 
             initialized = true;
@@ -50,45 +46,58 @@ public class AnimalRepositoryImpl implements AnimalRepository {
     }
 
     @Override
-    public Animal[] findLeapYearNames() {
-        return Arrays.stream(animals)
-                .filter(Objects::nonNull)
-                .filter(it -> Objects.nonNull(it.getBirthDate())
-                        && it.getBirthDate().isLeapYear())
-                .toArray(Animal[]::new);
+    public Map<String, LocalDate> findLeapYearNames() {
+        Map<String, LocalDate> result = new HashMap<>();
+        for (var pair : animals.entrySet()) {
+            var type = pair.getKey();
+            for (var animal : pair.getValue()) {
+                if (Objects.nonNull(animal.getBirthDate()) && animal.getBirthDate().isLeapYear()) {
+                    result.put(type + animal.getName(), animal.getBirthDate());
+                }
+            }
+        }
+        return result;
     }
 
     @Override
-    public Animal[] findOlderAnimal(int n) {
+    public Map<Animal, Integer> findOlderAnimal(int n) {
         if (n <= 0) {
             throw new IllegalStateException("number must be more than 0");
         }
+        Map<Animal, Integer> result = new HashMap<>();
+
 
         final var now = LocalDate.now();
 
-        return Arrays.stream(animals)
-                .filter(Objects::nonNull)
-                .filter(it -> Objects.nonNull(it.getBirthDate())
-                        && it.getBirthDate().plusYears(n).isBefore(now))
-                .toArray(Animal[]::new);
+        for (var pair : animals.entrySet()) {
+            for (var animal : pair.getValue()) {
+                if (Objects.nonNull(animal.getBirthDate())
+                        && animal.getBirthDate().plusYears(n).isBefore(now)) {
+                    result.put(animal, (int) ChronoUnit.YEARS.between(animal.getBirthDate(), now));
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override
-    public Animal[] findDuplicate() {
+    public Map<String, Integer> findDuplicate() {
         Set<Animal> set = new HashSet<>();
-        List<Animal> result = new ArrayList<>();
-        for (Animal a : animals) {
-            if (Objects.nonNull(a)) {
-                if (set.contains(a)) {
-                    result.add(a);
+        Map<String, Integer> result = new HashMap<>();
+
+        for (var pair : animals.entrySet()) {
+            for (var animal : pair.getValue()) {
+                if (set.contains(animal)) {
+                    result.put(pair.getKey(), result.getOrDefault(animal, 0) + 1);
                 } else {
-                    set.add(a);
+                    set.add(animal);
                 }
             }
 
         }
 
-        return result.toArray(Animal[]::new);
+        return result;
     }
 
 }

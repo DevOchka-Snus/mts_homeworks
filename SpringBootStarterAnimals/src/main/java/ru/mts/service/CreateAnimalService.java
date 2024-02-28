@@ -2,6 +2,9 @@ package ru.mts.service;
 
 import ru.mts.domain.Animal;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * The CreateAnimalService interface contains methods
  * that create Animal objects
@@ -16,8 +19,8 @@ public interface CreateAnimalService {
     /**
      * Method create array of Animal objects
      *
-     * @return array of Animal objects
+     * @return map of Animal objects
      */
-    Animal[] createAnimals();
+    Map<String, List<Animal>> createAnimals();
 
 }

@@ -5,10 +5,7 @@ import ru.mts.domain.AnimalType;
 import ru.mts.factory.AnimalFactory;
 import ru.mts.service.CreateAnimalService;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CreateAnimalServiceImpl implements CreateAnimalService {
 
@@ -25,21 +22,19 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
     }
 
     @Override
-    public Animal[] createAnimals() {
+    public Map<String, List<Animal>> createAnimals() {
         int count = 10;
-        List<Animal> animals = new ArrayList<>(count);
 
-        AnimalFactory factory = animalFactories.values()
-                .stream()
-                .filter(f -> f.isApplicable(animalType))
-                .findFirst()
-                .orElseThrow();
+        Map<String, List<Animal>> animalMap = new HashMap<>();
 
-        for (int i = 0; i < count; i++) {
-            animals.add(factory.createAnimal());
+        for (var factory : animalFactories.entrySet()) {
+            animalMap.put(factory.getKey(), new ArrayList<>());
+            for (int i = 0; i < count; i++) {
+                animalMap.get(factory.getKey()).add(factory.getValue().createAnimal());
+            }
         }
 
-        return animals.toArray(Animal[]::new);
+        return animalMap;
     }
 
 }
