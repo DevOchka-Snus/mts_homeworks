@@ -1,9 +1,9 @@
 animal:
   lion:
-    names: Lev, Simba, Mufasa, Artur, Vladimir
+    names: TestLev
   dog:
-    names: Vasya, Daniil, Vlad, Max, Rob
+    names: TestDog
   cat:
-    names: Jack, Roma, Kolya, Jesus, John
+    names: TestCat
   wolf:
-    names: Tesak, Taker, Carlson, Qwerty, Lox
+    names: TestWolf
