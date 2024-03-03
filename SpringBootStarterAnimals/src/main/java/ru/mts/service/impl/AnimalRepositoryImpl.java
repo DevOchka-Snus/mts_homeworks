@@ -6,9 +6,12 @@ import ru.mts.domain.Animal;
 import ru.mts.service.AnimalRepository;
 import ru.mts.service.CreateAnimalService;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class AnimalRepositoryImpl implements AnimalRepository {
@@ -47,16 +50,11 @@ public class AnimalRepositoryImpl implements AnimalRepository {
 
     @Override
     public Map<String, LocalDate> findLeapYearNames() {
-        Map<String, LocalDate> result = new HashMap<>();
-        for (var pair : animals.entrySet()) {
-            var type = pair.getKey();
-            for (var animal : pair.getValue()) {
-                if (Objects.nonNull(animal.getBirthDate()) && animal.getBirthDate().isLeapYear()) {
-                    result.put(type + animal.getName(), animal.getBirthDate());
-                }
-            }
-        }
-        return result;
+        return animals.entrySet().stream()
+                .flatMap(animal -> animal.getValue().stream()
+                        .filter(it -> Objects.nonNull(it.getBirthDate()) && it.getBirthDate().isLeapYear())
+                        .map(it -> Map.entry(animal.getKey() + it.getName(), it.getBirthDate())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a));
     }
 
     @Override
@@ -69,35 +67,53 @@ public class AnimalRepositoryImpl implements AnimalRepository {
 
         final var now = LocalDate.now();
 
-        for (var pair : animals.entrySet()) {
-            for (var animal : pair.getValue()) {
-                if (Objects.nonNull(animal.getBirthDate())
-                        && animal.getBirthDate().plusYears(n).isBefore(now)) {
-                    result.put(animal, (int) ChronoUnit.YEARS.between(animal.getBirthDate(), now));
-                }
-            }
-        }
-
-        return result;
+        return animals.entrySet().stream()
+                .flatMap(animal -> animal.getValue().stream()
+                        .filter(it -> Objects.nonNull(it.getBirthDate()) && it.getBirthDate().plusYears(n).isBefore(now))
+                        .map(it -> Map.entry(it, (int) ChronoUnit.YEARS.between(it.getBirthDate(), now))))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a));
     }
 
     @Override
-    public Map<String, Integer> findDuplicate() {
-        Set<Animal> set = new HashSet<>();
-        Map<String, Integer> result = new HashMap<>();
+    public Map<String, List<Animal>> findDuplicate() {
 
-        for (var pair : animals.entrySet()) {
-            for (var animal : pair.getValue()) {
-                if (set.contains(animal)) {
-                    result.put(pair.getKey(), result.getOrDefault(animal, 0) + 1);
-                } else {
-                    set.add(animal);
-                }
-            }
+        return animals.entrySet().stream()
+                .flatMap(animal -> animal.getValue().stream()
+                        .collect(Collectors.groupingBy(it -> it, Collectors.counting()))
+                        .entrySet().stream()
+                        .filter(entry -> entry.getValue() > 1)
+                        .map(Map.Entry::getKey)
+                )
+                .collect(Collectors.groupingBy(Animal::getType, Collectors.toList()));
+    }
 
-        }
+    @Override
+    public int findAverageAge(List<Animal> animalList) {
+        var amount = new BigDecimal(animalList.size());
+        var sum = animalList.stream()
+                .map(Animal::getCost)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return sum.divide(amount).setScale(0, RoundingMode.HALF_UP).intValue();
+    }
 
-        return result;
+    @Override
+    public List<Animal> findOldAndExpensive(List<Animal> animalList) {
+        var now = LocalDate.now();
+        var averageCost = new BigDecimal(findAverageAge(animalList));
+        return animalList.stream()
+                .filter(it -> ChronoUnit.YEARS.between(it.getBirthDate(), now) > 5
+                        && it.getCost().compareTo(averageCost) > 0)
+                .sorted(Comparator.comparingInt(a -> (int) ChronoUnit.YEARS.between(a.getBirthDate(), now)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Animal> findMinConstAnimals(List<Animal> animalList) {
+        return animalList.stream()
+                .sorted(Comparator.comparing(Animal::getCost))
+                .limit(3)
+                .sorted(Comparator.comparing(Animal::getName))
+                .collect(Collectors.toList());
     }
 
 }

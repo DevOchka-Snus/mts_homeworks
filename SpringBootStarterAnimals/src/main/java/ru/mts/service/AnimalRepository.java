@@ -3,6 +3,7 @@ package ru.mts.service;
 import ru.mts.domain.Animal;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,5 +40,32 @@ public interface AnimalRepository {
      *
      * @return map of Animal duplicates
      */
-    Map<String, Integer> findDuplicate();
+    Map<String, List<Animal>> findDuplicate();
+
+    /**
+     * Method find average age of animals
+     * @param animalList list of Animal objects
+     *
+     * @return average age of animals
+     * */
+    int findAverageAge(List<Animal> animalList);
+
+    /**
+     * Method find animals,
+     * which age more than 5 and cost more than average cost
+     *
+     * @param animalList list of Animal objects
+     *
+     * @return list of sorted animals in increased order
+     * */
+    List<Animal> findOldAndExpensive(List<Animal> animalList);
+
+    /**
+     * Method find top 3 animals with the smallest cost
+     *
+     * @param animalList list of Animal objects
+     *
+     * @return list of top 3 animals in decreased order
+     * */
+    List<Animal> findMinConstAnimals(List<Animal> animalList);
 }

@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public abstract class AbstractAnimal implements Animal {
-
     protected AnimalType animalType;
     protected String breed;
     protected String name;
@@ -87,4 +86,8 @@ public abstract class AbstractAnimal implements Animal {
         return birthDate;
     }
 
+    @Override
+    public String getType() {
+        return animalType.name();
+    }
 }

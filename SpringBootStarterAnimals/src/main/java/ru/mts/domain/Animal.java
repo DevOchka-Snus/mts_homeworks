@@ -40,4 +40,6 @@ public interface Animal {
      *  @return the value of the birthDate field
      *  */
     LocalDate getBirthDate();
+
+    String getType();
 }
