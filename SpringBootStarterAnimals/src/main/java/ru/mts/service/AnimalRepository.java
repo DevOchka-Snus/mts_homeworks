@@ -1,6 +1,7 @@
 package ru.mts.service;
 
 import ru.mts.domain.Animal;
+import ru.mts.exception.NullCollectionException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -48,7 +49,7 @@ public interface AnimalRepository {
      *
      * @return average age of animals
      * */
-    int findAverageAge(List<Animal> animalList);
+    int findAverageAge(List<Animal> animalList) throws NullCollectionException;
 
     /**
      * Method find animals,
@@ -58,7 +59,7 @@ public interface AnimalRepository {
      *
      * @return list of sorted animals in increased order
      * */
-    List<Animal> findOldAndExpensive(List<Animal> animalList);
+    List<Animal> findOldAndExpensive(List<Animal> animalList) throws NullCollectionException;
 
     /**
      * Method find top 3 animals with the smallest cost
@@ -67,5 +68,5 @@ public interface AnimalRepository {
      *
      * @return list of top 3 animals in decreased order
      * */
-    List<Animal> findMinConstAnimals(List<Animal> animalList);
+    List<Animal> findMinConstAnimals(List<Animal> animalList) throws NullCollectionException;
 }

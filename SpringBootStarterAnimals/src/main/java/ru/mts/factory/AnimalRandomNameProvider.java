@@ -2,6 +2,7 @@ package ru.mts.factory;
 
 import ru.mts.config.AnimalConfigurationProperties;
 import ru.mts.domain.AnimalType;
+import ru.mts.exception.IllegalAnimalTypeException;
 
 import java.util.Collections;
 import java.util.Random;
@@ -24,6 +25,9 @@ public class AnimalRandomNameProvider implements AnimalNameProvider {
 
     @Override
     public String generateName(AnimalType animalType) {
+        if (animalType == null) {
+            throw new IllegalAnimalTypeException("animalType is null");
+        }
         var animalsNames = animalConfigurationProperties.collectAnimalsNames();
         var names = animalsNames.getOrDefault(animalType, Collections.emptyList());
         if (names.isEmpty()) {

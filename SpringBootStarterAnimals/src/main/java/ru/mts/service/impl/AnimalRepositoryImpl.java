@@ -3,6 +3,9 @@ package ru.mts.service.impl;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.ObjectProvider;
 import ru.mts.domain.Animal;
+import ru.mts.exception.ArgumentIsNotGreaterThanZeroException;
+import ru.mts.exception.EmptyListException;
+import ru.mts.exception.NullCollectionException;
 import ru.mts.service.AnimalRepository;
 import ru.mts.service.CreateAnimalService;
 
@@ -60,7 +63,7 @@ public class AnimalRepositoryImpl implements AnimalRepository {
     @Override
     public Map<Animal, Integer> findOlderAnimal(int n) {
         if (n <= 0) {
-            throw new IllegalStateException("number must be more than 0");
+            throw new ArgumentIsNotGreaterThanZeroException("number must be more than 0");
         }
         Map<Animal, Integer> result = new HashMap<>();
 
@@ -88,7 +91,13 @@ public class AnimalRepositoryImpl implements AnimalRepository {
     }
 
     @Override
-    public int findAverageAge(List<Animal> animalList) {
+    public int findAverageAge(List<Animal> animalList) throws NullCollectionException {
+        if (animalList == null) {
+            throw new NullCollectionException("animalList is null");
+        }
+        if (animalList.isEmpty()) {
+            throw new EmptyListException("animal list is empty");
+        }
         var amount = new BigDecimal(animalList.size());
         var sum = animalList.stream()
                 .map(Animal::getCost)
@@ -97,7 +106,10 @@ public class AnimalRepositoryImpl implements AnimalRepository {
     }
 
     @Override
-    public List<Animal> findOldAndExpensive(List<Animal> animalList) {
+    public List<Animal> findOldAndExpensive(List<Animal> animalList) throws NullCollectionException {
+        if (animalList == null) {
+            throw new NullCollectionException("animalList is null");
+        }
         var now = LocalDate.now();
         var averageCost = new BigDecimal(findAverageAge(animalList));
         return animalList.stream()
@@ -108,7 +120,10 @@ public class AnimalRepositoryImpl implements AnimalRepository {
     }
 
     @Override
-    public List<Animal> findMinConstAnimals(List<Animal> animalList) {
+    public List<Animal> findMinConstAnimals(List<Animal> animalList) throws NullCollectionException {
+        if (animalList == null) {
+            throw new NullCollectionException("animalList is null");
+        }
         return animalList.stream()
                 .sorted(Comparator.comparing(Animal::getCost))
                 .limit(3)

@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.mts.config.AppConfigProperties;
+import ru.mts.exception.ArgumentIsNotGreaterThanZeroException;
+import ru.mts.exception.EmptyListException;
+import ru.mts.exception.IllegalAnimalTypeException;
+import ru.mts.exception.NullCollectionException;
 import ru.mts.service.AnimalRepository;
 import ru.mts.service.CreateAnimalService;
 
@@ -37,38 +41,48 @@ public class AnimalScheduler implements AnimalSchedulerMBean {
     @Scheduled(fixedRate = 60_000)
     @Override
     public void printAnimals() {
-        printInfo("findLeapYearNames");
-        var one = animalRepository.findLeapYearNames();
-        for (var animal : one.entrySet()) {
-            printInfo(animal.getKey() + ": " + animal.getValue().toString());
-        }
+        try {
+            printInfo("findLeapYearNames");
+            var one = animalRepository.findLeapYearNames();
+            for (var animal : one.entrySet()) {
+                printInfo(animal.getKey() + ": " + animal.getValue().toString());
+            }
 
-        var two = animalRepository.findOlderAnimal(animalCount);
-        printInfo("findOlderAnimal");
-        for (var animal : two.entrySet()) {
-            printInfo(animal.getKey().toString() + ": " + animal.getValue());
-        }
+            var two = animalRepository.findOlderAnimal(animalCount);
+            printInfo("findOlderAnimal");
+            for (var animal : two.entrySet()) {
+                printInfo(animal.getKey().toString() + ": " + animal.getValue());
+            }
 
-        printInfo("findDuplicate");
-        var three = animalRepository.findDuplicate();
-        for (var animal : three.entrySet()) {
-            printInfo(animal.getKey() + ": " + animal.getValue());
-        }
+            printInfo("findDuplicate");
+            var three = animalRepository.findDuplicate();
+            for (var animal : three.entrySet()) {
+                printInfo(animal.getKey() + ": " + animal.getValue());
+            }
 
-        printInfo("findAverageAge");
-        var four = animalRepository.findAverageAge(createAnimalService.createAnimals().values().stream().findFirst().get());
-        printInfo(String.valueOf(four));
+            printInfo("findAverageAge");
+            var four = animalRepository.findAverageAge(createAnimalService.createAnimals().values().stream().findFirst().get());
+            printInfo(String.valueOf(four));
 
-        printInfo("findOldAndExpensive");
-        var five = animalRepository.findOldAndExpensive(createAnimalService.createAnimals().values().stream().findFirst().get());
-        for (var animal : five) {
-            printInfo(animal.toString());
-        }
+            printInfo("findOldAndExpensive");
+            var five = animalRepository.findOldAndExpensive(createAnimalService.createAnimals().values().stream().findFirst().get());
+            for (var animal : five) {
+                printInfo(animal.toString());
+            }
 
-        printInfo("findMinConstAnimals");
-        var six = animalRepository.findMinConstAnimals(createAnimalService.createAnimals().values().stream().findFirst().get());
-        for (var animal : six) {
-            printInfo(animal.toString());
+            printInfo("findMinConstAnimals");
+            var six = animalRepository.findMinConstAnimals(createAnimalService.createAnimals().values().stream().findFirst().get());
+            for (var animal : six) {
+                printInfo(animal.toString());
+            }
+        } catch (ArgumentIsNotGreaterThanZeroException e) {
+            log.error(e.getMessage());
+        } catch (EmptyListException e) {
+            log.error(e.getMessage());
+        } catch (IllegalAnimalTypeException e) {
+            log.error(e.getMessage());
+        } catch (NullCollectionException e) {
+            log.error(e.getMessage());
         }
 
     }
