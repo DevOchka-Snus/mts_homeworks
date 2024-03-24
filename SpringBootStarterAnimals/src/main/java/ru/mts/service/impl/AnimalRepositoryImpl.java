@@ -14,6 +14,9 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 
@@ -21,17 +24,19 @@ public class AnimalRepositoryImpl implements AnimalRepository {
 
     private final ObjectProvider<CreateAnimalService> createAnimalService;
 
-    private final Map<String, List<Animal>> animals = new HashMap<>();
+    private final Map<String, List<Animal>> animals = new ConcurrentHashMap<>();
 
-    private boolean initialized;
+    private final AtomicBoolean initialized;
 
     public AnimalRepositoryImpl(ObjectProvider<CreateAnimalService> createAnimalService) {
         this.createAnimalService = createAnimalService;
+        initialized = new AtomicBoolean();
+        initialized.set(true);
     }
 
     @PostConstruct
     public void postConstruct() {
-        if (!initialized) {
+        if (!initialized.get()) {
 
             var prototype = createAnimalService.getIfAvailable();
 
@@ -46,27 +51,25 @@ public class AnimalRepositoryImpl implements AnimalRepository {
                 }
             }
 
-            initialized = true;
+            initialized.set(true);
         }
 
     }
 
     @Override
-    public Map<String, LocalDate> findLeapYearNames() {
+    public ConcurrentMap<String, LocalDate> findLeapYearNames() {
         return animals.entrySet().stream()
                 .flatMap(animal -> animal.getValue().stream()
                         .filter(it -> Objects.nonNull(it.getBirthDate()) && it.getBirthDate().isLeapYear())
                         .map(it -> Map.entry(animal.getKey() + it.getName(), it.getBirthDate())))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a));
+                .collect(Collectors.toConcurrentMap(ConcurrentMap.Entry::getKey, ConcurrentMap.Entry::getValue, (a, b) -> a));
     }
 
     @Override
-    public Map<Animal, Integer> findOlderAnimal(int n) {
+    public ConcurrentMap<Animal, Integer> findOlderAnimal(int n) {
         if (n <= 0) {
             throw new ArgumentIsNotGreaterThanZeroException("number must be more than 0");
         }
-        Map<Animal, Integer> result = new HashMap<>();
-
 
         final var now = LocalDate.now();
 
@@ -74,12 +77,11 @@ public class AnimalRepositoryImpl implements AnimalRepository {
                 .flatMap(animal -> animal.getValue().stream()
                         .filter(it -> Objects.nonNull(it.getBirthDate()) && it.getBirthDate().plusYears(n).isBefore(now))
                         .map(it -> Map.entry(it, (int) ChronoUnit.YEARS.between(it.getBirthDate(), now))))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a));
+                .collect(Collectors.toConcurrentMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a));
     }
 
     @Override
-    public Map<String, List<Animal>> findDuplicate() {
-
+    public ConcurrentMap<String, List<Animal>> findDuplicate() {
         return animals.entrySet().stream()
                 .flatMap(animal -> animal.getValue().stream()
                         .collect(Collectors.groupingBy(it -> it, Collectors.counting()))
@@ -87,7 +89,13 @@ public class AnimalRepositoryImpl implements AnimalRepository {
                         .filter(entry -> entry.getValue() > 1)
                         .map(Map.Entry::getKey)
                 )
-                .collect(Collectors.groupingBy(Animal::getType, Collectors.toList()));
+                .collect(Collectors.groupingByConcurrent(
+                        Animal::getType,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                Collections::synchronizedList
+                        )
+                ));
     }
 
     @Override
@@ -112,11 +120,11 @@ public class AnimalRepositoryImpl implements AnimalRepository {
         }
         var now = LocalDate.now();
         var averageCost = new BigDecimal(findAverageAge(animalList));
-        return animalList.stream()
+        return Collections.synchronizedList(animalList.stream()
                 .filter(it -> ChronoUnit.YEARS.between(it.getBirthDate(), now) > 5
                         && it.getCost().compareTo(averageCost) > 0)
                 .sorted(Comparator.comparingInt(a -> (int) ChronoUnit.YEARS.between(a.getBirthDate(), now)))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -124,11 +132,11 @@ public class AnimalRepositoryImpl implements AnimalRepository {
         if (animalList == null) {
             throw new NullCollectionException("animalList is null");
         }
-        return animalList.stream()
+        return Collections.synchronizedList(animalList.stream()
                 .sorted(Comparator.comparing(Animal::getCost))
                 .limit(3)
                 .sorted(Comparator.comparing(Animal::getName))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
 }
