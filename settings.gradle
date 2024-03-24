@@ -1,2 +1,3 @@
 rootProject.name = 'mts_HW_3'
+include 'SpringBootStarterAnimals'
 

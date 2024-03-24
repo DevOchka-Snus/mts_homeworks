@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group = 'ru.MTS'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter:3.1.0'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure:3.1.0'
+
+    testImplementation('org.junit.vintage:junit-vintage-engine') {
+        exclude group: 'org.hamcrest', module: 'hamcrest-core'
+    }
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.1.0'
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}

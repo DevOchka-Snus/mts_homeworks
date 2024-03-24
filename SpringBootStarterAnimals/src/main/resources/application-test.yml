@@ -1,0 +1,9 @@
+animal:
+  lion:
+    names: TestLev
+  dog:
+    names: TestDog
+  cat:
+    names: TestCat
+  wolf:
+    names: TestWolf
