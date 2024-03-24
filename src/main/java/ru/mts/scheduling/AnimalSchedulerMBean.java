@@ -6,4 +6,8 @@ public interface AnimalSchedulerMBean {
 
     void printAnimals();
 
+    void printDuplicates();
+
+    void printAverageAge();
+
 }

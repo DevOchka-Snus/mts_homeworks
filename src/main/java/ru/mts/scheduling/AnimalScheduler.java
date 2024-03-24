@@ -1,5 +1,6 @@
 package ru.mts.scheduling;
 
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ public class AnimalScheduler implements AnimalSchedulerMBean {
 
     private final AnimalRepository animalRepository;
 
-    private final boolean logDebugData;
     private final int animalCount;
 
     @Autowired
@@ -34,46 +34,67 @@ public class AnimalScheduler implements AnimalSchedulerMBean {
         }
         this.createAnimalService = createAnimalService;
         this.animalRepository = animalRepository;
-        this.logDebugData = appConfigProperties.getLogDebugData();
         this.animalCount = appConfigProperties.getAnimalCount();
+    }
+
+    @PostConstruct
+    private void postConstruct() {
+        Thread printDuplicatesThread = new Thread(() -> {
+            while (true) {
+                printDuplicates();
+                try {
+                    Thread.sleep(10_000);
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage());
+                }
+            }
+        });
+
+        printDuplicatesThread.setName("printDuplicatesThread");
+
+        Thread printAverageAgeThread = new Thread(() -> {
+            while (true) {
+                printAverageAge();
+                try {
+                    Thread.sleep(20_000);
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage());
+                }
+            }
+        });
+
+        printAverageAgeThread.setName("printAverageAgeThread");
+
+        printDuplicatesThread.start();
+        printAverageAgeThread.start();
     }
 
     @Scheduled(fixedRate = 60_000)
     @Override
     public void printAnimals() {
         try {
-            printInfo("findLeapYearNames");
+            log.info("findLeapYearNames");
             var one = animalRepository.findLeapYearNames();
             for (var animal : one.entrySet()) {
-                printInfo(animal.getKey() + ": " + animal.getValue().toString());
+                log.info(animal.getKey() + ": " + animal.getValue().toString());
             }
 
             var two = animalRepository.findOlderAnimal(animalCount);
-            printInfo("findOlderAnimal");
+            log.info("findOlderAnimal");
             for (var animal : two.entrySet()) {
-                printInfo(animal.getKey().toString() + ": " + animal.getValue());
+                log.info(animal.getKey().toString() + ": " + animal.getValue());
             }
 
-            printInfo("findDuplicate");
-            var three = animalRepository.findDuplicate();
-            for (var animal : three.entrySet()) {
-                printInfo(animal.getKey() + ": " + animal.getValue());
-            }
-
-            printInfo("findAverageAge");
-            var four = animalRepository.findAverageAge(createAnimalService.createAnimals().values().stream().findFirst().get());
-            printInfo(String.valueOf(four));
-
-            printInfo("findOldAndExpensive");
+            log.info("findOldAndExpensive");
             var five = animalRepository.findOldAndExpensive(createAnimalService.createAnimals().values().stream().findFirst().get());
             for (var animal : five) {
-                printInfo(animal.toString());
+                log.info(animal.toString());
             }
 
-            printInfo("findMinConstAnimals");
+            log.info("findMinConstAnimals");
             var six = animalRepository.findMinConstAnimals(createAnimalService.createAnimals().values().stream().findFirst().get());
             for (var animal : six) {
-                printInfo(animal.toString());
+                log.info(animal.toString());
             }
         } catch (ArgumentIsNotGreaterThanZeroException e) {
             log.error(e.getMessage());
@@ -87,13 +108,39 @@ public class AnimalScheduler implements AnimalSchedulerMBean {
 
     }
 
-    private void printInfo(String message) {
-        if (logDebugData) {
-            log.info(message);
-        } else {
-            System.out.println(message);
+    @Override
+    public void printDuplicates() {
+        try {
+            var three = animalRepository.findDuplicate();
+            StringBuilder result = new StringBuilder();
+            for (var animal : three.entrySet()) {
+                result.append(animal.getKey()).append(": ").append(animal.getValue());
+            }
+            var name = Thread.currentThread().getName();
+            log.info(name + ": " + (result.toString().isEmpty() ? "not duplicates" : result.toString()));
+        } catch (ArgumentIsNotGreaterThanZeroException e) {
+            log.error(e.getMessage());
+        } catch (EmptyListException e) {
+            log.error(e.getMessage());
+        } catch (IllegalAnimalTypeException e) {
+            log.error(e.getMessage());
         }
-
     }
 
+    @Override
+    public void printAverageAge() {
+        try {
+            var four = animalRepository.findAverageAge(createAnimalService.createAnimals().values().stream().findFirst().get());
+            var name = Thread.currentThread().getName();
+            log.info(name + ": " + four);
+        } catch (ArgumentIsNotGreaterThanZeroException e) {
+            log.error(e.getMessage());
+        } catch (EmptyListException e) {
+            log.error(e.getMessage());
+        } catch (IllegalAnimalTypeException e) {
+            log.error(e.getMessage());
+        } catch (NullCollectionException e) {
+            log.error(e.getMessage());
+        }
+    }
 }
